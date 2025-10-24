@@ -1,0 +1,48 @@
+services:
+  php:
+    build:
+      context: ./docker/php
+    container_name: yii2-php
+    volumes:
+      - ./:/app
+    depends_on:
+      - db
+    environment:
+      - TZ=Europe/Moscow
+    ports:
+      - "9000:9000"
+
+  nginx:
+    image: nginx:latest
+    container_name: yii2-nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/app
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php
+
+  db:
+    image: mysql:8.0
+    container_name: yii2-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: yii2db
+      MYSQL_USER: yii2user
+      MYSQL_PASSWORD: yii2pass
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+
+  adminer:
+    image: adminer
+    container_name: yii2-adminer
+    restart: always
+    ports:
+      - "8081:8080"
+
+volumes:
+  db_data:
