@@ -37,6 +37,19 @@ services:
     ports:
       - "3307:3306"
 
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    ports:
+      - "9001:9001"
+      - "9005:9000"
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio123
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+
   adminer:
     image: adminer
     container_name: yii2-adminer
@@ -46,3 +59,4 @@ services:
 
 volumes:
   db_data:
+  minio_data:
